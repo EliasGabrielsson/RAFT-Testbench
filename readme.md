@@ -1,8 +1,10 @@
 # Setup
 
+## Installing and verify tool chain
+
 Make sure you have python3.7 installed on your computer. Check by running: `python3.7 -V`
 
-1. Setup python3.7 venv
+1. If needed install python3.7 and venv
     ```
     sudo apt-get install python3.7 python3.7-venv
     ```
@@ -22,36 +24,41 @@ Make sure you have python3.7 installed on your computer. Check by running: `pyth
     ```
     python --version
     ```
+
 5. Install dependencies be executing:
     ```
     pip install -r requirements.txt
     ```
 
+6. Install AWS Command Line Interface v2 and setup your API key.
+    ```
+    sudo apt-get install awscli
+    ```
+
+7. Install Terraform from Hashicorp
+    ```
+    sudo apt-get install terraform
+    terraform apply -var="in_node_count=7" -var="default_keypair_name=keyname" -var="default_keypair_path=./path/to/key.pem"
+    ```
+
+8. Download the security key from AWS (maybe need to change permission for it `chmod 400`) and use it to connect to the cluster: 
+    ```
+    ssh core@X.X.X.X -i path/to/key.pem
+    ```
+
+9. Ensure the cluster is running: `etcdctl cluster-health`
+
+10. Destroy the cluster and free up AWS resources by running:
+    ```
+    terraform destroy
+    ```
+## Debugging:
+
+`journalctl --identifier=ignition --all` - Shows the output of the config tool used to bootstrap the instances
+`etcdctl --endpoints=X.X.X.X:2379 cluster-health` - Show if the cluster is up
+`etcdctl --endpoints=X.X.X.X:2379 member list` - Specifially shows the members of the cluster
+
 # Roadmap
-
-## Setup a basic network configuration
-
-## Setup a ETCD cluster
-
-Use this premade EC2 Image:
-http://coreos.com/os/docs/latest/booting-on-ec2.html
-
-The default username is: `core`.
-
-Make a Terraform script which enables number of nodes to be set dynamiclly in range from 3-30.
-
-## Setup an Ignite conf.
-Get etcd work somehow
-
-## Runtime configuration of Ignite conf.
-Explore if its possible to ssh inject new configs in a nice way
-
-## Create static config of tc-netem
-Provision a static conf during setup using Terraform.
-https://netbeez.net/blog/how-to-use-the-linux-traffic-control/
-
-## Runtime configuration of tc-netem
-Explore if its possible to ssh inject new configs in a nice way from the terraform script.
 
 ## Setup Grafana 
 Setup an instance of grafana consuming the information from: https://prometheus.io/
@@ -64,21 +71,5 @@ https://etcd.io/docs/v3.4.0/benchmarks/etcd-3-demo-benchmarks/
 https://docs.bitnami.com/general/infrastructure/etcd/administration/create-cluster/
 # Debug
 
-`journalctl --identifier=ignition --all`
-etcdctl cluster-health
-etcdctl member list
 
-0. Ersätt med bitnami images
 
-1. SKRIV CONF MHA:
-https://github.com/etcd-io/etcd/blob/master/Documentation/op-guide/configuration.md
-
-advertise-client-urls: http://IP_ADDRESS_OWN:2379
-initial-advertise-peer-urls: http://IP_ADDRESS_OWN:2380
-initial-cluster=http://IP_ADDRESS_OWN:2380,http://IP_ADDRESS_MEMBER_1:2380,http://IP_ADDRESS_MEMBER_2:2380
-
-2. ERSÄTT CONF <- Provision
-/opt/bitnami/conf/etcd.conf.yml 
-
-3. KÖR 
-sudo /opt/bitnami/ctlscript.sh restart

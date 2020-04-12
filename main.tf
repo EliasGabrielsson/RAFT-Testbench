@@ -8,11 +8,6 @@ terraform {
   required_version = ">= 0.12"
 }
 
-resource "aws_key_pair" "deployer" {
-  key_name   = "deployer-key"
-  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCSATZs0y1kW5KFZABfGG7h79agqEzBpXYZotIZd397Hfci2rRslLbren9DDqlt8HXzPTwIkcaDVjPwFjEiJKfh87OnFPk4fwgc9Lxk0a7+Ay+IBSHrErVFNXZ5v2/AMHPH52eYz/VzYsGLKafXb9IRSxzkurUd9cVnQ/7Ogu5Bkovxsmt7agKuKUDJrCHMuoylM1WV84SsfnbIobhQ2IXFXRQQ2K60/ngBURZeSP7BxNfbCwdWjPtifBILjGNrf3oWkSAwdwYFzlaf1bBJTNjYKAalcOFEhcd+XcUQbEzFEUNgmQEqyDlvvx4pKuX+HbeqH31SFDYac5JZKnqVrzUB"
-}
-
 locals {
     discovery_url = "${ data.external.etcd_url.result[ "etcd_discovery_url" ] }"
     ignition_etcd3_json_content = "[Unit]\nRequires=coreos-metadata.service\nAfter=coreos-metadata.service\n\n[Service]\nEnvironmentFile=/run/metadata/coreos\nExecStart=\nExecStart=/usr/lib/coreos/etcd-wrapper $ETCD_OPTS \\\n  --listen-peer-urls=\"http://$${COREOS_EC2_IPV4_LOCAL}:2380\" \\\n  --listen-client-urls=\"http://0.0.0.0:2379\" \\\n  --initial-advertise-peer-urls=\"http://$${COREOS_EC2_IPV4_LOCAL}:2380\" \\\n  --advertise-client-urls=\"http://$${COREOS_EC2_IPV4_LOCAL}:2379\" \\\n  --discovery=\"${local.discovery_url}\""
@@ -37,8 +32,6 @@ provider "aws" {
 }
 
 # NETWORK STUFF
-
-
 resource "aws_vpc" "lab-net" {
   cidr_block = "10.0.0.0/16"
   tags = {
@@ -49,6 +42,19 @@ resource "aws_vpc" "lab-net" {
 resource "aws_eip" "etcd-bootstrap-node-public_ip" {
   instance = aws_instance.etcd-bootstrap-node.id
   vpc      = true
+
+  # Connection data are used for all provisioner
+  connection {
+    type                = "ssh"
+    user                = "core"
+    host                = self.public_ip
+    private_key         = file(var.default_keypair_path)
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo tc qdisc add dev eth0 root netem delay ${var.simulated_latency}ms", "touch tc-enabled.txt"
+    ]
+  }
 }
 
 resource "aws_eip" "nat-public_ip" {
@@ -110,7 +116,7 @@ resource "aws_route_table_association" "routetable-a-2" {
   route_table_id = aws_route_table.lab-net-sub-public-routetable.id
 }
 
-# INSTANCES
+### INSTANCES
 resource "aws_instance" "etcd-bootstrap-node" {
   ami           = "ami-07c25af0e918ce3c1"
   instance_type = "t2.nano"
@@ -118,8 +124,7 @@ resource "aws_instance" "etcd-bootstrap-node" {
   private_ip    = "10.0.2.100"
   security_groups = [aws_security_group.etcd-io.id]
   user_data       = data.ignition_config.etcd3.rendered
-  key_name      = "Mars 2020"
-  
+  key_name      = var.default_keypair_name
 }
 
 resource aws_instance etcd-node {
@@ -129,9 +134,27 @@ resource aws_instance etcd-node {
   subnet_id     = aws_subnet.lab-net-sub-private.id
   security_groups = [aws_security_group.etcd-io.id]
   user_data       = data.ignition_config.etcd3.rendered
-  key_name      = "Mars 2020"
+  key_name      = var.default_keypair_name
   
   depends_on = [aws_instance.etcd-bootstrap-node]
+
+  # Connection data are used for all provisioner
+  connection {
+    type                = "ssh"
+    user                = "core"
+    host                = self.private_ip
+    private_key         = file(var.default_keypair_path)
+
+    bastion_host        = aws_eip.etcd-bootstrap-node-public_ip.public_ip
+    bastion_user        = "core"
+    bastion_private_key = file(var.default_keypair_path)
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo tc qdisc add dev eth0 root netem delay 200ms",
+    ]
+  }
 }
 
 /*

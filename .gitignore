@@ -34,3 +34,6 @@ terraform.rc
 
 # Python Virtual env.
 .venv
+
+# SSH Keys
+.pem

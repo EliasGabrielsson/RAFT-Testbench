@@ -13,7 +13,7 @@ output "etcd-node-private_ip" {
   description = "The private IP address (cloud network) of etcd nodes in the cluster"
 }
 
-output "Ignite-config" {
-  value = data.ignition_config.etcd3.rendered
-  description = "The ignite configuration provided to each core os node."
-}
+# output "Ignite-config" {
+#   value = data.ignition_config.etcd3.rendered
+#   description = "The ignite configuration provided to each core os node."
+# }

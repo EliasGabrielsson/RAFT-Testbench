@@ -143,3 +143,88 @@
 20200412 05:03:29 PM Starting new HTTPS connection (1): discovery.etcd.io:443
 20200412 05:03:30 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
 20200412 05:03:30 PM The etcd discovery url retrieved is [https://discovery.etcd.io/0608435d1e86d916da0bd1344fb5fe09]
+20200412 07:12:14 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 07:12:14 PM The stated node count in the etcd cluster is [7]
+20200412 07:12:14 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 07:12:15 PM https://discovery.etcd.io:443 "GET /new?size=7 HTTP/1.1" 200 58
+20200412 07:12:15 PM The etcd discovery url retrieved is [https://discovery.etcd.io/b389d058a09bc82c2553f915bc180108]
+20200412 07:20:53 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 07:20:53 PM The stated node count in the etcd cluster is [3]
+20200412 07:20:53 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 07:20:53 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 07:20:53 PM The etcd discovery url retrieved is [https://discovery.etcd.io/df435cd695df3c83e81ed20027097c77]
+20200412 07:29:32 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 07:29:32 PM The stated node count in the etcd cluster is [3]
+20200412 07:29:32 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 07:29:33 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 07:29:33 PM The etcd discovery url retrieved is [https://discovery.etcd.io/f28f897d32ee449e0950e12c7438b5a1]
+20200412 07:31:25 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 07:31:25 PM The stated node count in the etcd cluster is [3]
+20200412 07:31:25 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 07:31:26 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 07:31:26 PM The etcd discovery url retrieved is [https://discovery.etcd.io/aa15a65ae6bcee97df85cab0f1d9282f]
+20200412 07:44:16 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 07:44:16 PM The stated node count in the etcd cluster is [3]
+20200412 07:44:16 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 07:44:17 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 07:44:17 PM The etcd discovery url retrieved is [https://discovery.etcd.io/b827f7935693acbb7558ac4d1c9824b1]
+20200412 08:43:31 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 08:43:31 PM The stated node count in the etcd cluster is [3]
+20200412 08:43:32 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 08:43:32 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 08:43:32 PM The etcd discovery url retrieved is [https://discovery.etcd.io/bff9a51c0462519ba3b89035b869bef2]
+20200412 09:55:17 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 09:55:17 PM The stated node count in the etcd cluster is [3]
+20200412 09:55:17 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 09:55:18 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 09:55:18 PM The etcd discovery url retrieved is [https://discovery.etcd.io/ae31418777dacadbfdf42c27607598b5]
+20200412 10:10:23 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 10:10:23 PM The stated node count in the etcd cluster is [3]
+20200412 10:10:23 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 10:10:23 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 10:10:23 PM The etcd discovery url retrieved is [https://discovery.etcd.io/98e893bbe07d9353ba09f85585adf01c]
+20200412 10:18:36 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 10:18:36 PM The stated node count in the etcd cluster is [3]
+20200412 10:18:36 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 10:18:37 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 10:18:37 PM The etcd discovery url retrieved is [https://discovery.etcd.io/e5494d17659127204eb6b02053c8a3fa]
+20200412 10:28:08 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 10:28:08 PM The stated node count in the etcd cluster is [3]
+20200412 10:28:08 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 10:28:09 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 10:28:09 PM The etcd discovery url retrieved is [https://discovery.etcd.io/c693c626ebe8c398cf9e48eba0541d3b]
+20200412 10:52:48 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 10:52:48 PM The stated node count in the etcd cluster is [3]
+20200412 10:52:48 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 10:52:49 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 10:52:49 PM The etcd discovery url retrieved is [https://discovery.etcd.io/77ae013bd0c956fc36767b122f99addd]
+20200412 10:56:07 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 10:56:07 PM The stated node count in the etcd cluster is [3]
+20200412 10:56:07 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 10:56:08 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 10:56:08 PM The etcd discovery url retrieved is [https://discovery.etcd.io/be4ff685d20abbce76de536db99984e7]
+20200412 11:01:03 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 11:01:03 PM The stated node count in the etcd cluster is [3]
+20200412 11:01:03 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 11:01:04 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 11:01:04 PM The etcd discovery url retrieved is [https://discovery.etcd.io/8bc45ef145ef46dbe67b6eb6c3c2a61a]
+20200412 11:02:52 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 11:02:52 PM The stated node count in the etcd cluster is [3]
+20200412 11:02:52 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 11:02:52 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 11:02:52 PM The etcd discovery url retrieved is [https://discovery.etcd.io/938a596af6ea31233192926a7d02d2f3]
+20200412 11:08:15 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 11:08:15 PM The stated node count in the etcd cluster is [3]
+20200412 11:08:15 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 11:08:16 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 11:08:16 PM The etcd discovery url retrieved is [https://discovery.etcd.io/efc0a6a4dabe831dd07b95fc2dfeade4]
+20200412 11:11:32 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 11:11:32 PM The stated node count in the etcd cluster is [3]
+20200412 11:11:32 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 11:11:32 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 11:11:32 PM The etcd discovery url retrieved is [https://discovery.etcd.io/d977f557f0bd9411c340ea7ba0cb75d6]
+20200412 11:41:44 PM [etcd3-discovery-url.py] invoking script to grab an etcd discovery url.
+20200412 11:41:44 PM The stated node count in the etcd cluster is [3]
+20200412 11:41:44 PM Starting new HTTPS connection (1): discovery.etcd.io:443
+20200412 11:41:45 PM https://discovery.etcd.io:443 "GET /new?size=3 HTTP/1.1" 200 58
+20200412 11:41:45 PM The etcd discovery url retrieved is [https://discovery.etcd.io/068323a0684c2f502c8ff3ab5d349185]
