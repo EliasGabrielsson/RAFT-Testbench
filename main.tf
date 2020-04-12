@@ -13,11 +13,9 @@ resource "aws_key_pair" "deployer" {
   public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCSATZs0y1kW5KFZABfGG7h79agqEzBpXYZotIZd397Hfci2rRslLbren9DDqlt8HXzPTwIkcaDVjPwFjEiJKfh87OnFPk4fwgc9Lxk0a7+Ay+IBSHrErVFNXZ5v2/AMHPH52eYz/VzYsGLKafXb9IRSxzkurUd9cVnQ/7Ogu5Bkovxsmt7agKuKUDJrCHMuoylM1WV84SsfnbIobhQ2IXFXRQQ2K60/ngBURZeSP7BxNfbCwdWjPtifBILjGNrf3oWkSAwdwYFzlaf1bBJTNjYKAalcOFEhcd+XcUQbEzFEUNgmQEqyDlvvx4pKuX+HbeqH31SFDYac5JZKnqVrzUB"
 }
 
-
 locals {
     discovery_url = "${ data.external.etcd_url.result[ "etcd_discovery_url" ] }"
-
-    ignition_etcd3_json_content = "[Unit]\nRequires=coreos-metadata.service\nAfter=coreos-metadata.service\n\n[Service]\nEnvironmentFile=/run/metadata/coreos\nExecStart=\nExecStart=/usr/lib/coreos/etcd-wrapper $ETCD_OPTS \\\n  --listen-peer-urls=\"http://0.0.0.0:2380\" \\\n  --listen-client-urls=\"http://0.0.0.0:2379\" \\\n  --initial-advertise-peer-urls=\"http://0.0.0.0:2380\" \\\n  --advertise-client-urls=\"http://0.0.0.0:2379\" \\\n  --discovery=\"${local.discovery_url}\""
+    ignition_etcd3_json_content = "[Unit]\nRequires=coreos-metadata.service\nAfter=coreos-metadata.service\n\n[Service]\nEnvironmentFile=/run/metadata/coreos\nExecStart=\nExecStart=/usr/lib/coreos/etcd-wrapper $ETCD_OPTS \\\n  --listen-peer-urls=\"http://$${COREOS_EC2_IPV4_LOCAL}:2380\" \\\n  --listen-client-urls=\"http://0.0.0.0:2379\" \\\n  --initial-advertise-peer-urls=\"http://$${COREOS_EC2_IPV4_LOCAL}:2380\" \\\n  --advertise-client-urls=\"http://$${COREOS_EC2_IPV4_LOCAL}:2379\" \\\n  --discovery=\"${local.discovery_url}\""
 }
 
 /*
@@ -38,31 +36,97 @@ provider "aws" {
   region     = "eu-west-1"
 }
 
-# module "containers" {
-#   source = "./modules/cluster-node"
-# }
+# NETWORK STUFF
+
+
+resource "aws_vpc" "lab-net" {
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "lab-net"
+  }
+}
 
 resource "aws_eip" "etcd-bootstrap-node-public_ip" {
   instance = aws_instance.etcd-bootstrap-node.id
   vpc      = true
 }
 
+resource "aws_eip" "nat-public_ip" {
+  vpc      = true
+}
+
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.lab-net.id
+  tags = {
+    Name = "etcd-lab GW"
+  }
+}
+
+resource "aws_subnet" "lab-net-sub-public" {
+  vpc_id                  = aws_vpc.lab-net.id
+  cidr_block              = "10.0.2.0/24"
+  depends_on = [aws_internet_gateway.gw]
+}
+
+resource "aws_subnet" "lab-net-sub-private" {
+  vpc_id                  = aws_vpc.lab-net.id
+  cidr_block              = "10.0.1.0/24"
+  depends_on = [aws_internet_gateway.gw]
+}
+
+resource "aws_nat_gateway" "nat-gateway" {
+  subnet_id = aws_subnet.lab-net-sub-public.id
+  allocation_id = aws_eip.nat-public_ip.id
+  depends_on = [aws_internet_gateway.gw]
+}
+
+resource "aws_route_table" "lab-net-sub-private-routetable" {
+	vpc_id = aws_vpc.lab-net.id
+	route {
+		cidr_block = "0.0.0.0/0"
+		nat_gateway_id = aws_nat_gateway.nat-gateway.id
+	}
+  tags = {
+    Name = "lab-private-routetable"
+  }
+}
+resource "aws_route_table_association" "routetable-a-1" {
+  subnet_id = aws_subnet.lab-net-sub-private.id
+  route_table_id = aws_route_table.lab-net-sub-private-routetable.id
+}
+
+resource "aws_route_table" "lab-net-sub-public-routetable" {
+	vpc_id = aws_vpc.lab-net.id
+	route {
+		cidr_block = "0.0.0.0/0"
+		gateway_id = aws_internet_gateway.gw.id
+	}
+  tags = {
+    Name = "lab-public-routetable"
+  }
+}
+resource "aws_route_table_association" "routetable-a-2" {
+  subnet_id = aws_subnet.lab-net-sub-public.id
+  route_table_id = aws_route_table.lab-net-sub-public-routetable.id
+}
+
+# INSTANCES
 resource "aws_instance" "etcd-bootstrap-node" {
   ami           = "ami-07c25af0e918ce3c1"
   instance_type = "t2.nano"
-  subnet_id     = aws_subnet.lab-net-sub.id
-  private_ip    = "10.0.0.100"
+  subnet_id     = aws_subnet.lab-net-sub-public.id
+  private_ip    = "10.0.2.100"
   security_groups = [aws_security_group.etcd-io.id]
+  user_data       = data.ignition_config.etcd3.rendered
   key_name      = "Mars 2020"
   
 }
 
 resource aws_instance etcd-node {
   count         = var.in_node_count - 1
-
   ami           = "ami-07c25af0e918ce3c1"
   instance_type = "t2.nano"
-  subnet_id     = aws_subnet.lab-net-sub.id
+  subnet_id     = aws_subnet.lab-net-sub-private.id
   security_groups = [aws_security_group.etcd-io.id]
   user_data       = data.ignition_config.etcd3.rendered
   key_name      = "Mars 2020"
@@ -99,44 +163,6 @@ data ignition_systemd_unit etcd3 {
     }
 }
 
-resource "aws_vpc" "lab-net" {
-  cidr_block = "10.0.0.0/16"
-  tags = {
-    Name = "lab-net"
-  }
-}
-
-resource "aws_internet_gateway" "gw" {
-  vpc_id = aws_vpc.lab-net.id
-  tags = {
-    Name = "etcd-lab GW"
-  }
-}
-
-resource "aws_subnet" "lab-net-sub" {
-  vpc_id                  = aws_vpc.lab-net.id
-  cidr_block              = "10.0.0.0/16"
-
-  depends_on = [aws_internet_gateway.gw]
-}
-
-resource "aws_route_table" "etcd-lab-routetable" {
-	vpc_id = aws_vpc.lab-net.id
-	route {
-		cidr_block = "0.0.0.0/0"
-		gateway_id = aws_internet_gateway.gw.id
-	}
-
-  tags = {
-    Name = "etcd-lab-routetable"
-  }
-}
-resource "aws_route_table_association" "etcd-lab-routetable-a" {
-  subnet_id = aws_subnet.lab-net-sub.id
-  route_table_id = aws_route_table.etcd-lab-routetable.id
-}
-
-
 resource "aws_security_group" "etcd-io" {
   name        = "etcd-io"
   description = "Allow ports for etcd"
@@ -167,7 +193,7 @@ resource "aws_security_group" "etcd-io" {
   }
 
   ingress {
-    description = "etcd"
+    description = "etcd-1"
     from_port   = 2379
     to_port     = 2380
     protocol    = "tcp"
@@ -175,7 +201,7 @@ resource "aws_security_group" "etcd-io" {
   }
 
   ingress {
-    description = "etcd"
+    description = "etcd-2"
     from_port   = 4001
     to_port     = 4001
     protocol    = "tcp"
@@ -183,7 +209,7 @@ resource "aws_security_group" "etcd-io" {
   }
 
   ingress {
-    description = "etcd"
+    description = "etcd-3"
     from_port   = 7001
     to_port     = 7001
     protocol    = "tcp"
