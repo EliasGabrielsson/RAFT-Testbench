@@ -55,10 +55,26 @@ Make sure you have python3.7 installed on your computer. Check by running: `pyth
 ## Debugging:
 
 `journalctl --identifier=ignition --all` - Shows the output of the config tool used to bootstrap the instances
+
 `etcdctl --endpoints=X.X.X.X:2379 cluster-health` - Show if the cluster is up
+
 `etcdctl --endpoints=X.X.X.X:2379 member list` - Specifially shows the members of the cluster
 
+`etcdctl endpoint status --cluster -w table` - Show leader node
+
+`etcdctl --endpoints=X.X.X.X:2379 put key value` - Put a value in the cluster
+
+`etcdctl --endpoints=54.246.218.50:2379 endpoint status | awk -F, '{print $2}'` - Get member id for a node
+
+`etcdctl --endpoints=54.246.218.50:2379 move-leader a3228e72f2c653d` - Move leader 
+
+`journalctl -u etcd-member.service` - Show log output of etcd which includes leader elections and put operations.
+
 # Roadmap
+
+## How to loadtest:
+https://github.com/sinsharat/etcdloadtest
+
 
 ## Setup Grafana 
 Setup an instance of grafana consuming the information from: https://prometheus.io/
@@ -66,10 +82,4 @@ Setup an instance of grafana consuming the information from: https://prometheus.
 
 # Sources for the paper:
 https://etcd.io/docs/v3.4.0/benchmarks/etcd-3-demo-benchmarks/
-
-
-https://docs.bitnami.com/general/infrastructure/etcd/administration/create-cluster/
-# Debug
-
-
 
