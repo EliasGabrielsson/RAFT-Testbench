@@ -38,6 +38,7 @@ Make sure you have python3.7 installed on your computer. Check by running: `pyth
 7. Install Terraform from Hashicorp
     ```
     sudo apt-get install terraform
+    terraform init
     terraform apply -var="in_node_count=7" -var="default_keypair_name=keyname" -var="default_keypair_path=./path/to/key.pem"
     ```
 
