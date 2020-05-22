@@ -38,7 +38,6 @@ Make sure you have python3.7 installed on your computer. Check by running: `pyth
 7. Install Terraform from Hashicorp
     ```
     sudo apt-get install terraform
-    terraform init
     terraform apply -var="in_node_count=7" -var="default_keypair_name=keyname" -var="default_keypair_path=./path/to/key.pem"
     ```
 
@@ -53,7 +52,14 @@ Make sure you have python3.7 installed on your computer. Check by running: `pyth
     ```
     terraform destroy
     ```
-## Debugging:
+
+## Run Tests
+
+1. Create EC2 SSH key within your AWS console, enter the keyname within the `test.bash` file.
+2. Also download the key, add the key path to `test.bash`.
+3. Run the test by executing `bash test.bash min-nodes max-nodes min-latency max-latency interval-latency`
+
+## Various Debug Commands:
 
 `journalctl --identifier=ignition --all` - Shows the output of the config tool used to bootstrap the instances
 
@@ -69,18 +75,6 @@ Make sure you have python3.7 installed on your computer. Check by running: `pyth
 
 `etcdctl --endpoints=54.246.218.50:2379 move-leader a3228e72f2c653d` - Move leader 
 
-`journalctl -u etcd-member.service` - Show log output of etcd which includes leader elections and put operations.
+`journalctl -u etcd-member.service -r -o json-pretty` - Show log output of etcd which includes leader elections and put operations.
 
-# Roadmap
-
-## How to loadtest:
-https://github.com/sinsharat/etcdloadtest
-
-
-## Setup Grafana 
-Setup an instance of grafana consuming the information from: https://prometheus.io/
-
-
-# Sources for the paper:
-https://etcd.io/docs/v3.4.0/benchmarks/etcd-3-demo-benchmarks/
-
+`scp -i path/to/key.pem core@X.X.X.X:/remote/dir/foobar.txt /local/di` - Fetch log file from cluster

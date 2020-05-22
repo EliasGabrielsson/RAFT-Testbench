@@ -37,3 +37,7 @@ terraform.rc
 
 # SSH Keys
 .pem
+
+etcd3-discovery-url.log
+
+.DS_Store

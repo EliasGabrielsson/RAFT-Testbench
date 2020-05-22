@@ -50,8 +50,15 @@ resource "aws_eip" "etcd-bootstrap-node-public_ip" {
     host                = self.public_ip
     private_key         = file(var.default_keypair_path)
   }
+
+  provisioner "file" {
+    source      = var.default_keypair_path
+    destination = "/home/core/key.pem"
+  }
+
   provisioner "remote-exec" {
     inline = [
+      "chmod 400 /home/core/key.pem",
       "sudo tc qdisc add dev eth0 root netem delay ${var.simulated_latency}ms", "touch tc-enabled.txt"
     ]
   }
@@ -152,7 +159,7 @@ resource aws_instance etcd-node {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo tc qdisc add dev eth0 root netem delay 200ms",
+      "sudo tc qdisc add dev eth0 root netem delay ${var.simulated_latency}ms", "touch tc-enabled.txt"
     ]
   }
 }
