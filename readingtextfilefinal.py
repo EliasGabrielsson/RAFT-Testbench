@@ -6,12 +6,9 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib import cm
-
 import numpy as np
 import statistics 
 
-
-from mpl_toolkits.mplot3d import Axes3D
 
 all_files_node_level = os.listdir("test_results/")
 
